@@ -1,9 +1,10 @@
+import PyIndi
 from time import sleep
-from _indiclient import IndiClient
+from windi._indiclient import *
 
 class Controller:
     def __init__(self):
-        self.indiclient = IndieClient()
+        self.indiclient = _indiclient.IndieClient()
 
     def __setServer(self, ip='localhost', port=7624):
         self.indiclient.setServer(ip, port)

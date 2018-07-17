@@ -1,5 +1,4 @@
 from subprocess import Popen
-from _indiclient import IndiClient
 
 # Start an indi server
 #
