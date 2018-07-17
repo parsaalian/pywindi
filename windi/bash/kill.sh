@@ -1,1 +1,3 @@
-kill -9 $(pgrep -f server.sh)
+fuser -k $1/tcp || true
+PID=$!
+kill -INT $PID
