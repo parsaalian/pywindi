@@ -1,1 +1,0 @@
-indiserver $1
