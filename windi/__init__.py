@@ -17,11 +17,13 @@ def startServer(serverType):
 def killServer(port=7624):
     Popen('fuser -k\ ' + str(port) + '/tcp || true', shell=True)
 
+
 # Controller for all of actions with PyIndi, such as connecting to server, changing properties and ...
 #
 class Controller(IndiClient):
     def __init__(self):
         super(Controller, self).__init__()
+
 
     # Check if indi server is running or not
     #
@@ -31,6 +33,7 @@ class Controller(IndiClient):
              print("No indiserver running on " + self.getHost() + ":" + str(self.getPort()) + " - Try to run:")
              print("    indiserver indi_" + deviceName.replace(' ', '_').lower())
              sys.exit(1)
+
 
     # Trying to connect given device for one timeself.
     #
@@ -50,6 +53,7 @@ class Controller(IndiClient):
             time.sleep(0.5)
             device = self.getDevice(deviceName)
 
+        self.deviceName = deviceName
         self.device = device
 
         deviceConnect = device.getSwitch("CONNECTION")
@@ -68,6 +72,15 @@ class Controller(IndiClient):
         self.deviceConnected = device.isConnected()
         return device.isConnected()
 
+
+    # Initiate the camera for stream.
+    #
+    def initiateStreamMode(self):
+        # We should inform the indi server that we want to receive the "CCD1" blob from this device.
+        self.setProperty("ccd video stream", 'switch', True, False)
+        self.setBLOBMode(PyIndi.B_ALSO, self.deviceName, "CCD1")
+
+
     # Change the given property of device.
     #
     # @param propertyName {String} - the name of the property to change.
@@ -84,6 +97,7 @@ class Controller(IndiClient):
             self.__setBlob(propertName, *args)
         else:
             raise Exception('Unavailable type of property.')
+
 
     # Get the value of the given property.
     #
@@ -103,6 +117,7 @@ class Controller(IndiClient):
         else:
             raise Exception('Unavailable type of property.')
 
+
     #######################################################
     ######################  setters  ######################
     #######################################################
@@ -116,6 +131,7 @@ class Controller(IndiClient):
             switch[i].s = PyIndi.ISS_ON if args[i] == True else PyIndi.ISS_OFF
         self.sendNewSwitch(switch)
 
+
     # Set values for text properties.
     #
     # @param propertyName {String} - name of property to change, which is a text.
@@ -125,6 +141,7 @@ class Controller(IndiClient):
         for i in range(len(args)):
             text[i].text = args[i]
         self.sendNewText(text)
+
 
     # Set values for number properties.
     #
@@ -136,6 +153,7 @@ class Controller(IndiClient):
             number[i].value = args[i]
         self.sendNewNumber(number)
 
+
     ###########################################################################
 
     #######################################################
@@ -146,28 +164,31 @@ class Controller(IndiClient):
     # @param propertyName {String} - name of property to get, which is a switch.
     # @para, index {Number} - the index of the sub property.
     def __getSwitch(self, propertyName, index):
-        return self.device(propertyName.replace(' ', '_').upper())[index].s
+        return self.device.getSwitch(propertyName.replace(' ', '_').upper())[index].s
+
 
     # Get the value of text propeties.
     #
     # @param propertyName {String} - name of property to get, which is a text.
     # @para, index {Number} - the index of the sub property.
     def __getText(self, propertyName, index):
-        return self.device(propertyName.replace(' ', '_').upper())[index].text
+        return self.device.getText(propertyName.replace(' ', '_').upper())[index].text
+
 
     # Get the value of number propeties.
     #
     # @param propertyName {String} - name of property to get, which is a number.
     # @para, index {Number} - the index of the sub property.
     def __getNumber(self, propertyName, index):
-        return self.device(propertyName.replace(' ', '_').upper())[index].values
+        return self.device.getNumber(propertyName.replace(' ', '_').upper())[index].values
+
 
     # Get the value of blob propeties.
     #
     # @param propertyName {String} - name of property to get, which is a blob.
     # @para, index {Number} - the index of the sub property.
     def __getBLOB(self, propertyName, index):
-        return self.device(propertyName.replace(' ', '_').upper())[index].blob
+        return self.device.getBLOB(propertyName.replace(' ', '_').upper())[index]
 
     ############################################################################
 
