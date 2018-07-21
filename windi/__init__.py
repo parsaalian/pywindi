@@ -52,7 +52,7 @@ class Controller(IndiClient):
         # Tries to connect to device every 0.5 second (time can change).
         device = self.getDevice(deviceName)
         while device is None:
-            time.sleep(0.5)
+            time.sleep(0.25)
             device = self.getDevice(deviceName)
         # Set the device status if it is found.
         self.deviceName = deviceName
@@ -60,18 +60,20 @@ class Controller(IndiClient):
         # Tries to get the connection switch every 0.5 second (time can change).
         deviceConnect = device.getSwitch("CONNECTION")
         while deviceConnect is None:
-            time.sleep(0.5)
+            time.sleep(0.25)
             deviceConnect = device.getSwitch("CONNECTION")
         # checks that device is connected for two times.
         for i in range(2):
             if device.isConnected():
                 break
-            time.sleep(0.5)
+            time.sleep(0.25)
             deviceConnect[0].s = PyIndi.ISS_ON
             deviceConnect[1].s = PyIndi.ISS_OFF
             self.sendNewSwitch(deviceConnect)
 
+
         self.deviceConnected = device.isConnected()
+        time.sleep(0.5)
         return device.isConnected()
 
 
@@ -81,6 +83,50 @@ class Controller(IndiClient):
         # We should inform the indi server that we want to receive the "CCD1" blob from this device.
         self.setProperty("ccd video stream", 'switch', True, False)
         self.setBLOBMode(PyIndi.B_ALSO, self.deviceName, "CCD1")
+
+    def strISState(self, s):
+        if (s == PyIndi.ISS_OFF):
+            return "Off"
+        else:
+            return "On"
+
+    def strIPState(self, s):
+        if (s == PyIndi.IPS_IDLE):
+            return "Idle"
+        elif (s == PyIndi.IPS_OK):
+            return "Ok"
+        elif (s == PyIndi.IPS_BUSY):
+            return "Busy"
+        elif (s == PyIndi.IPS_ALERT):
+            return "Alert"
+
+
+    def printProperties(self):
+        print("List of Device Properties")
+        print("-- "+self.device.getDeviceName())
+        lp = self.device.getProperties()
+        for p in lp:
+            print("   > "+p.getName())
+            if p.getType()==PyIndi.INDI_TEXT:
+                tpy=p.getText()
+                for t in tpy:
+                    print("       "+t.name+"("+t.label+")= "+t.text)
+            elif p.getType()==PyIndi.INDI_NUMBER:
+                tpy=p.getNumber()
+                for t in tpy:
+                    print("       "+t.name+"("+t.label+")= "+str(t.value))
+            elif p.getType()==PyIndi.INDI_SWITCH:
+                tpy=p.getSwitch()
+                for t in tpy:
+                    print("       "+t.name+"("+t.label+")= "+self.strISState(t.s))
+            elif p.getType()==PyIndi.INDI_LIGHT:
+                tpy=p.getLight()
+                for t in tpy:
+                    print("       "+t.name+"("+t.label+")= "+self.strIPState(t.s))
+            elif p.getType()==PyIndi.INDI_BLOB:
+                tpy=p.getBLOB()
+                for t in tpy:
+                    print("       "+t.name+"("+t.label+")= <blob "+str(t.size)+" bytes>")
 
 
     # Change the given property of device.
@@ -139,7 +185,7 @@ class Controller(IndiClient):
     # @param propertyName {String} - name of property to change, which is a text.
     # @param *args {String} - new values for properties.
     def __setText(self, propertyName, *args):
-        text = self.device.getSwitch(propertyName.replace(' ', '_').upper())
+        text = self.device.getText(propertyName.replace(' ', '_').upper())
         for i in range(len(args)):
             text[i].text = args[i]
         self.sendNewText(text)
@@ -150,7 +196,7 @@ class Controller(IndiClient):
     # @param propertyName {String} - name of property to change, which is a switch.
     # @param *args {Number} - new values for properties.
     def __setNumber(self, propertyName, *args):
-        number = self.device.getSwitch(propertyName.replace(' ', '_').upper())
+        number = self.device.getNumber(propertyName.replace(' ', '_').upper())
         for i in range(len(args)):
             number[i].value = args[i]
         self.sendNewNumber(number)
@@ -204,6 +250,7 @@ def createNewController(deviceName):
     for i in range(numCtrls):
         connected = controllers[i]._oneStepConnect(deviceName)
         if connected:
+            print("Device connected.")
             return controllers[i]
     print("No device is connected to the system. Please connect and try again.")
     sys.exit(1)

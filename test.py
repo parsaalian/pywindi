@@ -5,8 +5,8 @@ import ctypes
 import numpy as np
 import cv2
 
-
 controller = windi.createNewController("v4l2 ccd")
+controller.printProperties()
 controller.initiateStreamMode()
 
 tick = time.time()
@@ -19,3 +19,5 @@ while time.time() - tick <= 15:
     array = np.reshape(array, (480, 640))
     cv2.imshow("Cameras", array)
     cv2.waitKey(1)
+
+controller.disconnectServer()
