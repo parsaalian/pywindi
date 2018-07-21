@@ -8,14 +8,14 @@ import sys, time
 # @param serverType {String} - type of server to run. e.g. "v4l2 ccd" -> "indi_v4l2_ccd"
 def startServer(serverType):
     serverType = 'indi_' + serverType.replace(' ', '_').lower()
-    Popen('indiserver\ ' + serverType, shell=True)
+    return Popen(['indiserver', serverType])
 
 
 # Kill the server started in start server function (or in the command line)
 #
 # @param port {number} - port of server to terminate. default value is 7624.
 def killServer(port=7624):
-    Popen('fuser -k\ ' + str(port) + '/tcp || true', shell=True)
+    Popen(['fuser', '-k', str(port) + '/tcp'])
 
 
 # Controller for all of actions with PyIndi, such as connecting to server, changing properties and ...
@@ -23,6 +23,8 @@ def killServer(port=7624):
 class Controller(IndiClient):
     def __init__(self):
         super(Controller, self).__init__()
+        self.device = None
+
 
 
     # Check if indi server is running or not
@@ -200,6 +202,5 @@ def createNewController(deviceName):
         connected = controllers[i]._oneStepConnect(deviceName)
         if connected:
             return controllers[i]
-        print("Test " + str(i + 1) + " failed.")
     print("No device is connected to the system. Please connect and try again.")
     sys.exit(1)
