@@ -5,7 +5,7 @@ import sys, time
 
 # Start an indi server
 #
-# @param serverType {String} - type of server to run. e.g. "v4l2 ccd" -> "indi_v4l2_ccd"
+# @param serverType {String} - type of server to run. -> e.g. "v4l2 ccd" -> "indi_v4l2_ccd"
 def startServer(serverType):
     serverType = 'indi_' + serverType.replace(' ', '_').lower()
     return Popen(['indiserver', serverType])
@@ -29,7 +29,7 @@ class Controller(IndiClient):
 
     # Check if indi server is running or not
     #
-    # @param deviceName {String} - the name of the connecting decive to suggest if no server was running. e.g. v4l2 ccd
+    # @param deviceName {String} - the name of the connecting decive to suggest if no server was running. -> e.g. v4l2 ccd
     def __serverConnectedCheck(self, deviceName):
         if not self.connectServer():
              print("No indiserver running on " + self.getHost() + ":" + str(self.getPort()) + " - Try to run:")
@@ -39,9 +39,9 @@ class Controller(IndiClient):
 
     # Trying to connect given device for one timeself.
     #
-    # @param deviceName {String} - the name of the connecting device.
-    # @param host {String} - the name of host which server is running on.
-    # @param port {Number} - the port of the host which server is running on.
+    # @param deviceName {String} - the name of the connecting device. -> e.g. "v4l2 ccd"
+    # @param host {String} - the name of host which server is running on. Default value is localhost. -> e.g. "127.0.0.1"
+    # @param port {Number} - the port of the host which server is running on. Default value is 7624. -> e.g. 8080
     def _oneStepConnect(self, deviceName, host='localhost', port=7624):
         self.setServer(host, port)
         self.__serverConnectedCheck(deviceName)
@@ -49,20 +49,20 @@ class Controller(IndiClient):
         deviceName = deviceName.upper()
         device = None
         deviceConnect = None
-
+        # Tries to connect to device every 0.5 second (time can change).
         device = self.getDevice(deviceName)
         while device is None:
             time.sleep(0.5)
             device = self.getDevice(deviceName)
-
+        # Set the device status if it is found.
         self.deviceName = deviceName
         self.device = device
-
+        # Tries to get the connection switch every 0.5 second (time can change).
         deviceConnect = device.getSwitch("CONNECTION")
         while deviceConnect is None:
             time.sleep(0.5)
             deviceConnect = device.getSwitch("CONNECTION")
-
+        # checks that device is connected for two times.
         for i in range(2):
             if device.isConnected():
                 break
@@ -85,9 +85,9 @@ class Controller(IndiClient):
 
     # Change the given property of device.
     #
-    # @param propertyName {String} - the name of the property to change.
+    # @param propertyName {String} - the name of the property to change. -> e.g. "CONNECTION" or "connection" (case insensitive)
     # @param type {String} - type of the changing property: 1. switch - 2. text - 3. number - 4. blob
-    # @param *args {Boolean|String|Number|Blob} - new values for the property depends on type. Boolean for switch, Text for text and Number for number
+    # @param *args {Boolean|String|Number|Blob} - new values for the property depends on type. Boolean for switch, Text for text and Number for number.
     def setProperty(self, propertName, type, *args):
         if type == 'switch':
             self.__setSwitch(propertName, *args)
@@ -103,7 +103,7 @@ class Controller(IndiClient):
 
     # Get the value of the given property.
     #
-    # @param propertName {String} - the name of the property to get.
+    # @param propertName {String} - the name of the property to get. -> e.g. "CONNECTION" or "connection" (case insensitive)
     # @param type {String} - type of the changing property: 1. switch - 2. text - 3. number - 4. blob.
     # @param index {Number} - the index of the sub property.
     def getProperty(self, propertyName, type, index):
@@ -195,6 +195,9 @@ class Controller(IndiClient):
     ############################################################################
 
 
+# Tries connecting to server for ten times (maximum). Returns the connected device if connected, else exits the programself.
+#
+# @param deviceName {String} - the name of the connecting decive. e.g. "v4l2 ccd"
 def createNewController(deviceName):
     numCtrls = 10
     controllers = [Controller() for i in range(numCtrls)]
