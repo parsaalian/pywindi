@@ -1,7 +1,5 @@
 # WINDI
 
-:version: 1.1.0
-
 Windi Project is a wrapper for PyIndi library that automates many functionalities with simple interface.
 It is a package for python and the commands for terminal will be available in future versions.
 
