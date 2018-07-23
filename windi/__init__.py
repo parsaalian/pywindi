@@ -79,54 +79,10 @@ class Controller(IndiClient):
 
     # Initiate the camera for stream.
     #
-    def initiateStreamMode(self):
+    def initiateStreamMode(self, agent):
         # We should inform the indi server that we want to receive the "CCD1" blob from this device.
-        self.setProperty("ccd video stream", 'switch', True, False)
+        agent.setProperty("ccd video stream", {0: True, 1: False})
         self.setBLOBMode(PyIndi.B_ALSO, self.deviceName, "CCD1")
-
-    def strISState(self, s):
-        if (s == PyIndi.ISS_OFF):
-            return "Off"
-        else:
-            return "On"
-
-    def strIPState(self, s):
-        if (s == PyIndi.IPS_IDLE):
-            return "Idle"
-        elif (s == PyIndi.IPS_OK):
-            return "Ok"
-        elif (s == PyIndi.IPS_BUSY):
-            return "Busy"
-        elif (s == PyIndi.IPS_ALERT):
-            return "Alert"
-
-
-    def printProperties(self):
-        print("List of Device Properties")
-        print("-- "+self.device.getDeviceName())
-        lp = self.device.getProperties()
-        for p in lp:
-            print("   > "+p.getName())
-            if p.getType()==PyIndi.INDI_TEXT:
-                tpy=p.getText()
-                for t in tpy:
-                    print("       "+t.name+"("+t.label+")= "+t.text)
-            elif p.getType()==PyIndi.INDI_NUMBER:
-                tpy=p.getNumber()
-                for t in tpy:
-                    print("       "+t.name+"("+t.label+")= "+str(t.value))
-            elif p.getType()==PyIndi.INDI_SWITCH:
-                tpy=p.getSwitch()
-                for t in tpy:
-                    print("       "+t.name+"("+t.label+")= "+self.strISState(t.s))
-            elif p.getType()==PyIndi.INDI_LIGHT:
-                tpy=p.getLight()
-                for t in tpy:
-                    print("       "+t.name+"("+t.label+")= "+self.strIPState(t.s))
-            elif p.getType()==PyIndi.INDI_BLOB:
-                tpy=p.getBLOB()
-                for t in tpy:
-                    print("       "+t.name+"("+t.label+")= <blob "+str(t.size)+" bytes>")
 
     ############################################################################
 
