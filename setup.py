@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='windi',
-      version='1.1.0',
+      version='1.2.0',
       description='Wrapper for pyindi',
       classifiers=[
             'Development Status :: 3 - Alpha',
