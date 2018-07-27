@@ -1,6 +1,6 @@
 # WINDI
 
-Windi Project is a wrapper for PyIndi library that automates many functionalities with simple interface.
+Windi Project is a wrapper for PyIndi library that automates many functionalities with a simple interface.
 It is a package for python and the commands for terminal will be available in future versions.
 
 ## Installation
@@ -54,6 +54,7 @@ python3 setup.py install
 
 * **Parsa Alian** - *Initial work* - [parsaalian0](https://gitlab.com/parsaalian0)
 * **Emad Salehi** - [emad_salehi](https://gitlab.com/emad_salehi)
+* **Seyed Sajad Kahani** - [sskahani](https://gitlab.com/sskahani)
 
 ## License
 
