@@ -1,5 +1,5 @@
-from windi.winclient import Winclient
-from windi.windevice import Windevice
+from pywindi.winclient import Winclient
+from pywindi.windevice import Windevice
 import time
 
 client = Winclient()

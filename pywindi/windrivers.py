@@ -1,4 +1,4 @@
-from windi.windevice import Windevice
+from pywindi.windevice import Windevice
 import PyIndi
 import os
 import io
@@ -9,7 +9,6 @@ class SBIG_CCD(Windevice):
 
     def __init__(self, winclient, indi_device, **kwargs):
         super().__init__(winclient, indi_device)
-        self._winclient.setBLOBMode(1, self._device.getDeviceName(), None)
         # Make config directories.
         for dir in self.config:
             if not os.path.exists(self.config[dir]):
@@ -26,10 +25,11 @@ class SBIG_CCD(Windevice):
 
 
     def take_image(self, exposure_time):
+        self._winclient.wait_for_property('SBIG CCD', 'CCD1')
+        self._winclient.setBLOBMode(1, self._device.getDeviceName(), None)
         self.set_property('CCD_EXPOSURE', [exposure_time])
-        self._winclient.blob_semaphore.acquire()
         # Get image data
-        img = self.get_property('CCD1', True, 0)
+        img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
         # Write image data to BytesIO buffer
         blobfile = io.BytesIO(img.getblobdata())
         # Get fits directory

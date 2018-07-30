@@ -1,16 +1,17 @@
 import PyIndi
-from windi.windrivers import *
-from windi.event import *
+from pywindi.windrivers import *
+from pywindi.tools import *
 from threading import Semaphore
 import sys
+import time
 
 class Winclient(PyIndi.BaseClient):
     devices_list = {}
 
+    blob_queue = {}
+
     device_wait = EventManager(10)
     property_wait = EventManager(10)
-    temprature_wait = EventManager(10)
-    blob_semaphore = Semaphore(0)
 
     def __init__(self, host='localhost', port=7624):
         super(Winclient, self).__init__()
@@ -23,18 +24,19 @@ class Winclient(PyIndi.BaseClient):
 
     ################################# INDI BUILT IN FUNCTIONS #################################
     def newDevice(self, d):
+        print('New Device::', d.getDeviceName())
         self.device_wait.send(d.getDeviceName())
 
     def newProperty(self, p):
-        
+        if p.getName() == 'CCD1':
+            self.blob_queue[p.getDeviceName()] = Queue(200)
         self.property_wait.send(p.getDeviceName() + '::' + p.getName())
 
     def removeProperty(self, p):
         pass
 
     def newBLOB(self, bp):
-        #print('NEW BLOB :: ', bp)
-        self.blob_semaphore.release()
+        self.blob_queue[bp.bvp.device].push([time, bp])
 
     def newSwitch(self, svp):
         pass
@@ -42,8 +44,8 @@ class Winclient(PyIndi.BaseClient):
     # prints the temprature of a ccd everytime it is changed.
     def newNumber(self, nvp):
         pass
-        '''if nvp.name == 'CCD_TEMPERATURE':
-            print('tempraure: ' + str(nvp[0].value))'''
+        if nvp.name == 'CCD_TEMPERATURE':
+            print('Temprature: ', round(nvp[0].value, 3))
 
     def newText(self, tvp):
         pass

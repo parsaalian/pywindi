@@ -6,7 +6,7 @@ class EventManager:
     lock = Lock()
 
     # @param timeout {Number} - the time that wait function waits for a key to send.
-    def __init__(self, timeout):
+    def __init__(self, timeout=None):
         self.timeout = timeout
 
     # Fire the event in event_dict.
@@ -34,3 +34,29 @@ class EventManager:
             e = self.event_dict[key]
         self.lock.release()
         e.wait(self.timeout)
+
+
+class Queue:
+    overflow_limit = 0
+    event_manager = EventManager()
+    push_counter = 0
+    pop_counter = 0
+    queue = []
+
+    def __init__(self, limit=50):
+        self.overflow_limit = limit
+
+    def push(self, item):
+        if len(self.queue) == self.overflow_limit:
+            print('Queue is full.')
+            return
+        self.queue.append(item)
+        self.event_manager.send(self.push_counter)
+        self.push_counter += 1
+
+    def pop(self):
+        self.event_manager.wait(self.pop_counter)
+        self.pop_counter += 1
+        item = self.queue[0]
+        self.queue = self.queue[1:]
+        return item
