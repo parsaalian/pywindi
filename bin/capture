@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+
+import windi
+
+Imagetaker = Imagetaker()
+Imagetaker.take_image()

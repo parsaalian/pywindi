@@ -18,6 +18,14 @@ class Windevice:
         self._winclient.wait_for_property(self._device.getDeviceName(), property_name)
 
 
+    def get_name(self):
+        return self._device.getDeviceName()
+
+
+    def get_properties(self):
+        return self._device.getProperties()
+
+
     # Change the given property of device.
     #
     # @param property_name {String} - the name of the property to change. -> e.g. "CONNECTION" or "connection" (case insensitive)

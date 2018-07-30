@@ -6,7 +6,7 @@ class EventManager:
     lock = Lock()
 
     # @param timeout {Number} - the time that wait function waits for a key to send.
-    def __init__(self, timeout=10.0):
+    def __init__(self, timeout):
         self.timeout = timeout
 
     # Fire the event in event_dict.
