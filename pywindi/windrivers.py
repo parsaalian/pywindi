@@ -19,8 +19,12 @@ class SBIG_CCD(Windevice):
         for name, conf in kwargs.items():
             self.config[name] = conf
 
+    def set_binning(self, bin_x, bin_y):
+        self.set_property('CCD_BINNING', [bin_x, bin_y])
+
 
     def set_temperature(self, temperature):
+        self.set_property('CCD_COOLER', [True, False])
         self.set_property('CCD_TEMPERATURE', [temperature])
 
 
@@ -28,6 +32,7 @@ class SBIG_CCD(Windevice):
         self._winclient.wait_for_property('SBIG CCD', 'CCD1')
         self._winclient.setBLOBMode(1, self._device.getDeviceName(), None)
         self.set_property('CCD_EXPOSURE', [exposure_time])
+        print('Capturing image...')
         # Get image data
         img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
         # Write image data to BytesIO buffer
@@ -43,6 +48,8 @@ class SBIG_CCD(Windevice):
         # Open a file and save buffer to disk
         with open(filename, "wb") as f:
             f.write(blobfile.getvalue())
+
+        print('Image saved in', self.config['image_directory'])
 
 
 class V4L2_CCD(Windevice):

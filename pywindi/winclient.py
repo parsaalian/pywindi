@@ -24,7 +24,7 @@ class Winclient(PyIndi.BaseClient):
 
     ################################# INDI BUILT IN FUNCTIONS #################################
     def newDevice(self, d):
-        print('New Device::', d.getDeviceName())
+        print('New Device ::', d.getDeviceName())
         self.device_wait.send(d.getDeviceName())
 
     def newProperty(self, p):
@@ -44,8 +44,8 @@ class Winclient(PyIndi.BaseClient):
     # prints the temprature of a ccd everytime it is changed.
     def newNumber(self, nvp):
         pass
-        if nvp.name == 'CCD_TEMPERATURE':
-            print('Temprature: ', round(nvp[0].value, 3))
+        #if nvp.name == 'CCD_TEMPERATURE':
+        #    print('Temprature: ', round(nvp[0].value, 3))
 
     def newText(self, tvp):
         pass
@@ -67,7 +67,7 @@ class Winclient(PyIndi.BaseClient):
     # Returns the device with name given.
     #
     # @param device_name {String} - the name of the device for connection.
-    def get_device_by_name(self, device_name, **kwargs):
+    def get_device(self, device_name, **kwargs):
         self.device_wait.wait(device_name)
         indi_device = self.getDevice(device_name)
         self.wait_for_property(indi_device.getDeviceName(), 'DRIVER_INFO')

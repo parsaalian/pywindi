@@ -64,7 +64,7 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 indiclient=IndiClient()
 
-indiclient.setServer("192.168.150.72",7624)
+indiclient.setServer("localhost",7624)
 
 print("Connecting and waiting 2secs")
 if (not(indiclient.connectServer())):

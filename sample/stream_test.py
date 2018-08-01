@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 
 client = Winclient()
-webcam = client.get_device_by_name('V4L2 CCD', DEVICE_PORT=['/dev/video0'])
+webcam = client.get_device('V4L2 CCD', DEVICE_PORT=['/dev/video0'])
 webcam.set_property("Image Adjustments", [50, 90, None, None, None, None, None, None, None, None, None, None])
 
  def seeing(device, buffer_time = 60):

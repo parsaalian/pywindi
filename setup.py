@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+print(find_packages())
+
 setup(name='pywindi',
     version='1.3.0',
     description='Wrapper for pyindi',
