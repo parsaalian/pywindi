@@ -37,8 +37,8 @@ class EventManager:
 
 
 class Queue:
-    overflow_limit = 0
     event_manager = EventManager()
+    overflow_limit = 0
     push_counter = 0
     pop_counter = 0
     queue = []
