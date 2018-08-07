@@ -20,6 +20,6 @@ setup(name='pywindi',
     include_package_data=True,
     entry_points='''
         [console_scripts]
-        capture=pywindi.scripts.capture:cli
+        capture=pywindi.scripts.capture:capturer
     ''',
     zip_safe=False)

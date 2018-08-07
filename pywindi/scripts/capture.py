@@ -33,7 +33,7 @@ def take_image_with_one_client(client, time, temperature, binning):
 @click.option('--binning', type=(float, float), help='binning of CCD for image')
 @click.option('--interval', type=float, help='interval between images')
 @click.option('--count', type=int, help='number of images to take')
-def cli(time, temperature, binning, interval, count):
+def capturer(time, temperature, binning, interval, count):
     ccd_time, ccd_temp, ccd_bin = time, temperature, binning
     add_clients()
     for i in range(count):
