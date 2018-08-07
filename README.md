@@ -58,4 +58,4 @@ python3 setup.py install
 
 ## License
 
-This project is licensed under the MIT License.
+This project is free under the GPL License.
