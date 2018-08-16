@@ -4,7 +4,9 @@ import click
 from time import sleep
 
 ccd_time, ccd_temp, ccd_bin = 0.0, 0.0, (0.0, 0.0)
+#: path where image is saved.
 image_path = '/home/dimm/Desktop/images/'
+#: list of hosts.
 address = ['localhost:7624']
 clients = []
 
@@ -12,7 +14,12 @@ def add_address(host, port):
     address.append(host + ':' + str(port))
 
 
+def delete_address(host, port):
+    address.remove(host + ':' + str(port))
+
+
 def add_clients():
+    #: add all of the clients in client list.
     for a in address:
         host, port = a.split(':')
         client = Winclient(host, int(port))
@@ -20,6 +27,7 @@ def add_clients():
 
 
 def take_image_with_one_client(client, time, temperature, binning):
+    #: set the base properties.
     ccd = client.get_device('SBIG CCD')
     ccd.configure(image_directory=image_path)
     ccd.set_binning(binning[0], binning[1])
