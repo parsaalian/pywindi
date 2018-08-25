@@ -5,19 +5,18 @@ import io
 import time
 
 class SBIG_CCD(Windevice):
-    config = {'image_directory': '/home/dimm/Desktop/images/'}
+    config = {'image_directory': None}
 
     def __init__(self, winclient, indi_device, **kwargs):
         super().__init__(winclient, indi_device)
-        # Make config directories.
-        for dir in self.config:
-            if not os.path.exists(self.config[dir]):
-                os.makedirs(self.config[dir])
 
 
     def configure(self, **kwargs):
         for name, conf in kwargs.items():
             self.config[name] = conf
+        for dir in self.config:
+            if not os.path.exists(self.config[dir]):
+                os.makedirs(self.config[dir])
 
     def set_binning(self, bin_x, bin_y):
         self.set_property('CCD_BINNING', [bin_x, bin_y])
@@ -39,17 +38,17 @@ class SBIG_CCD(Windevice):
         blobfile = io.BytesIO(img.getblobdata())
         # Get fits directory
         cwd = self.config['image_directory']
-
         # Create datetime for file name
         time_str = time.strftime("%Y%m%d%H%M%S")
         # Append date time to file name
-        filename = cwd + "r" + "_" + time_str + ".fits"
+        filename = cwd + time_str + ".fits"
 
         # Open a file and save buffer to disk
         with open(filename, "wb") as f:
             f.write(blobfile.getvalue())
 
         print('Image saved in', self.config['image_directory'])
+        return filename
 
 
 class V4L2_CCD(Windevice):
