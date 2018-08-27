@@ -31,7 +31,11 @@ def add_clients():
 
 def take_image_with_one_client(client, time, temperature, binning, address):
     #: set the base properties.
-    ccd = client.get_device('SBIG CCD')
+    try:
+        ccd = client.get_device('SBIG CCD')
+    except:
+        print('Couldn\'t connect to', address, 'server.')
+        return
     ccd.configure(image_directory=image_path + str(address) + '/')
     ccd.set_binning(binning[0], binning[1])
     ccd.set_temperature(temperature)

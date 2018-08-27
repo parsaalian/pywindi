@@ -28,19 +28,25 @@ class SBIG_CCD(Windevice):
 
 
     def take_image(self, exposure_time):
+        tick = time.time()
         self._winclient.wait_for_property('SBIG CCD', 'CCD1')
         self._winclient.setBLOBMode(1, self._device.getDeviceName(), None)
         self.set_property('CCD_EXPOSURE', [exposure_time])
         print('Capturing image...')
         # Get image data
-        img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
+        try:
+            img = self._winclient.blob_queue['SBIG CCD'].pop(2 * exposure_time + 6)[1]
+        except:
+            print(self._device.getDeviceName(), 'disconnected.\nCouldn\'t capture image.')
+            return
         # Write image data to BytesIO buffer
         blobfile = io.BytesIO(img.getblobdata())
         # Get fits directory
         cwd = self.config['image_directory']
         # Create datetime for file name
         time_str = time.strftime("%Y%m%d%H%M%S")
-        # Append date time to file name
+        # Append date time to file name]
+        print (cwd)
         filename = cwd + time_str + ".fits"
 
         # Open a file and save buffer to disk

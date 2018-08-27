@@ -47,14 +47,14 @@ class EventManager:
         e.set()
 
 
-    def wait(self, key):
+    def wait(self, key, timeout=-1):
         """When you want to wait for a value to be set, you
         can call this function and it waits the program until
         the send function for the same key is called.
 
         :param key: key of the event in dictionary.
         """
-
+        timeout = self.timeout if timeout == -1 else timeout
         #: Locks the event dictionary so no other changes can happen
         #: to it, during this change.
         self.lock.acquire()
@@ -71,7 +71,7 @@ class EventManager:
 
         #: Unlock dictionary.
         self.lock.release()
-        e.wait(self.timeout)
+        e.wait(timeout)
 
 
 class Queue:
@@ -107,14 +107,16 @@ class Queue:
         self.event_manager.send(self.push_counter)
         self.push_counter += 1
 
-    def pop(self):
+    def pop(self, timeout=-1):
         """This function get the element at the start of the queue, if it
         is available. Being available means that element if pushed before
         it is popped. If the element is not pushed, it waits until it is.
         """
 
         #: Waiting for the element to be pushed.
-        self.event_manager.wait(self.pop_counter)
+        self.event_manager.wait(self.pop_counter, timeout)
+        if len(self.queue) == 0:
+            return None
         self.pop_counter += 1
         item = self.queue[0]
         #: deleting the element from the queue.

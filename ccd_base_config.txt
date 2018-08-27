@@ -1,2 +1,2 @@
-/home/dimm/Desktop/images/
+/home/dimm/Desktop/image/
 (localhost:7624)

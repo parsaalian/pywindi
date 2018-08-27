@@ -12,6 +12,7 @@ def config_cli(directory, hosts):
 
 
 def config(directory, hosts):
+    file = open('ccd_base_config.txt', 'w')
     file.write(directory + '\n')
     file.write(hosts)
     file.close()
