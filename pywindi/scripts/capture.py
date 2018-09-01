@@ -2,6 +2,7 @@ from pywindi.winclient import Winclient
 import threading
 import click
 from time import sleep
+from datetime import datetime
 
 file = open('ccd_base_config.txt', 'r')
 
@@ -12,6 +13,7 @@ image_path = file.readline()[:-1]
 addresses = file.readline()[1:-1].replace(' ', '').split(',')
 clients = []
 file_names = []
+images = {}
 
 def add_address(host, port = 7624):
     addresses.append(host + ':' + str(port))
@@ -39,6 +41,7 @@ def take_image_with_one_client(client, time, temperature, binning, address):
     ccd.configure(image_directory=image_path + str(address) + '/')
     ccd.set_binning(binning[0], binning[1])
     ccd.set_temperature(temperature)
+    images[ccd.take_image(time)] = datetime.utcnow()
     file_names.append(ccd.take_image(time))
 
 
@@ -85,4 +88,4 @@ def capturer(time, temperature, binning, interval, count):
         if not i == count - 1:
             print('Waiting', interval, 'seconds.')
             sleep(interval)
-    return (file_names)
+    return images
