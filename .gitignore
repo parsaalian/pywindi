@@ -12,3 +12,5 @@ __pycache__/
 tags.*
 .DS_Store
 .DS_Store?
+.idea/
+
