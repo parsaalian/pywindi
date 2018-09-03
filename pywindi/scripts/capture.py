@@ -11,7 +11,7 @@ image_path = file.readline()[:-1]
 #: list of hosts.
 addresses = file.readline()[1:-1].replace(' ', '').split(',')
 clients = []
-file_names = []
+file_name = None
 
 def add_address(host, port = 7624):
     addresses.append(host + ':' + str(port))
@@ -39,7 +39,7 @@ def take_image_with_one_client(client, time, temperature, binning, address):
     ccd.configure(image_directory=image_path + str(address) + '/')
     ccd.set_binning(binning[0], binning[1])
     ccd.set_temperature(temperature)
-    file_names.append(ccd.take_image(time))
+    file_name = ccd.take_image(time)
 
 
 @click.command()
@@ -65,7 +65,7 @@ def capturer_cli(time, temperature, binning, interval, count):
         if not i == count - 1:
             print('Waiting', interval, 'seconds.')
             sleep(interval)
-    return (file_names)
+
 
 
 def capturer(time, temperature, binning, interval, count):
@@ -85,4 +85,4 @@ def capturer(time, temperature, binning, interval, count):
         if not i == count - 1:
             print('Waiting', interval, 'seconds.')
             sleep(interval)
-    return (file_names)
+        yield file_name
