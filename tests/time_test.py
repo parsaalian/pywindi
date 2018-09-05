@@ -23,8 +23,8 @@ class TimeTest(unittest.TestCase):
         device.configure(image_directory=image_path + str(addresses[0]) + '/')
         worksheet.write(0, 0, 'expected time')
         worksheet.write(0, 1, 'real time')
-        for i in range(40):
-            exposure_time = random() * 20
+        for i in range(50):
+            exposure_time = random() * 200 + 100
             tick = time.time()
             device.take_image(exposure_time)
             tick = time.time() - tick

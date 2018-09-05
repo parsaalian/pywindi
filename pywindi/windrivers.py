@@ -3,12 +3,12 @@ import PyIndi
 import os
 import io
 import time
+import traceback
 
 class SBIG_CCD(Windevice):
-    config = {'image_directory': None}
-
     def __init__(self, winclient, indi_device, **kwargs):
         super().__init__(winclient, indi_device)
+        self.config = {'image_directory': None}
 
 
     def configure(self, **kwargs):
@@ -35,8 +35,10 @@ class SBIG_CCD(Windevice):
         print('Capturing image...')
         # Get image data
         try:
-            img = self._winclient.blob_queue['SBIG CCD'].pop(2 * exposure_time + 6)[1]
-        except:
+            print(self._winclient.blob_queue['SBIG CCD'])
+            img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
+        except Exception as e:
+            traceback.print_exc()
             print(self._device.getDeviceName(), 'disconnected.\nCouldn\'t capture image.')
             return
         # Write image data to BytesIO buffer

@@ -3,9 +3,6 @@ import PyIndi
 INDI_TYPES = ['number', 'switch', 'text', 'light', 'blob']
 
 class Windevice:
-    _winclient = None
-    _device = None
-
     def __init__(self, winclient, device, **kwargs):
         '''Set client, device and initial properties for device.
 

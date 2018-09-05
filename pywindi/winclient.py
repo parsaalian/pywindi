@@ -19,23 +19,24 @@ class Winclient(PyIndi.BaseClient):
     :param port: the port of the host to connect. The default value is 7624 which is
                  the default reserved port for indi.
     """
-
-    #: a dictionary with devices. The keys are devices names and the valus are
-    #: pywindi objects.
-    devices_list = {}
-
-    #: a dictionary which the keys are devices names and the values are objects
-    #: of type utils.Queue. In this data structure, the received blobs of each
-    #: device is saved in the queue until it is called.
-    blob_queue = {}
-
-    #: event managers for devices and properties. If they are received from the
-    #: system, the respected event of them will be set in the event manager.
-    device_wait = EventManager(10)
-    property_wait = EventManager(10)
-
+    
     def __init__(self, host='localhost', port=7624):
         super(Winclient, self).__init__()
+        #: a dictionary with devices. The keys are devices names and the valus are
+        #: pywindi objects.
+        self.devices_list = {}
+
+        #: a dictionary which the keys are devices names and the values are objects
+        #: of type utils.Queue. In this data structure, the received blobs of each
+        #: device is saved in the queue until it is called.
+        self.blob_queue = {}
+
+        #: event managers for devices and properties. If they are received from the
+        #: system, the respected event of them will be set in the event manager.
+        self.device_wait = EventManager(10)
+        self.property_wait = EventManager(10)
+
+        self.host = host
         #: connects to the given server.
         self.setServer(host, port)
         if not self.connectServer():
@@ -64,6 +65,7 @@ class Winclient(PyIndi.BaseClient):
 
     def newBLOB(self, bp):
         #: adds the new blob to its queue.
+        print('blobe sag')
         self.blob_queue[bp.bvp.device].push([time, bp])
 
     def newSwitch(self, svp):

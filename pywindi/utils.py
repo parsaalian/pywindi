@@ -11,12 +11,11 @@ class EventManager:
     :param timout: the time to wait before stop waiting.
     """
 
-    #: Dictionary of events waiting to execute (event wating list).
-    event_dict = {}
-    lock = Lock()
-
     def __init__(self, timeout=None):
         self.timeout = timeout
+        #: Dictionary of events waiting to execute (event wating list).
+        self.event_dict = {}
+        self.lock = Lock()
 
 
     def send(self, key):
@@ -47,14 +46,14 @@ class EventManager:
         e.set()
 
 
-    def wait(self, key, timeout=-1):
+    def wait(self, key, timeout=None):
         """When you want to wait for a value to be set, you
         can call this function and it waits the program until
         the send function for the same key is called.
 
         :param key: key of the event in dictionary.
         """
-        timeout = self.timeout if timeout == -1 else timeout
+        timeout = self.timeout if timeout == None else timeout
         #: Locks the event dictionary so no other changes can happen
         #: to it, during this change.
         self.lock.acquire()
@@ -82,14 +81,12 @@ class Queue:
     :param limit: the maximum number of elements in the queue.
     """
 
-    event_manager = EventManager()
-    overflow_limit = 0
-    push_counter = 0
-    pop_counter = 0
-    queue = []
-
     def __init__(self, limit=50):
         self.overflow_limit = limit
+        self.event_manager = EventManager()
+        self.push_counter = 0
+        self.pop_counter = 0
+        self.queue = []
 
     def push(self, item):
         """This function adds the element to the queue. And set the event
@@ -107,7 +104,7 @@ class Queue:
         self.event_manager.send(self.push_counter)
         self.push_counter += 1
 
-    def pop(self, timeout=-1):
+    def pop(self, timeout=None):
         """This function get the element at the start of the queue, if it
         is available. Being available means that element if pushed before
         it is popped. If the element is not pushed, it waits until it is.

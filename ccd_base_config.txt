@@ -1,2 +1,2 @@
-/home/dimm/Desktop/image/
+/home/surena/Desktop/images/
 (localhost:7624)
