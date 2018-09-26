@@ -39,13 +39,10 @@ def take_image_with_one_client(client, time, temperature, binning, address):
         print(e)
         print('Couldn\'t connect to', address, 'server.')
         return
-    print('hello darkness my old friend')
     ccd.configure(image_directory=image_path + str(address) + '/')
-    print('configured')
     ccd.set_binning(binning[0], binning[1])
-    print('binned')
     ccd.set_temperature(temperature)
-    image_info = (ccd.take_image, datetime.utcnow())
+    image_info = (ccd.take_image(time), datetime.utcnow())
 
 @click.command()
 @click.option('--time', type=float, help='exposure time of image')

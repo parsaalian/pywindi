@@ -18,6 +18,7 @@ class SBIG_CCD(Windevice):
             if not os.path.exists(self.config[dir]):
                 os.makedirs(self.config[dir])
 
+
     def set_binning(self, bin_x, bin_y):
         self.set_property('CCD_BINNING', [bin_x, bin_y])
 
@@ -25,6 +26,8 @@ class SBIG_CCD(Windevice):
     def set_temperature(self, temperature):
         self.set_property('CCD_COOLER', [True, False])
         self.set_property('CCD_TEMPERATURE', [temperature])
+        self._winclient.conditional_wait.wait('CCD_TEMPERATURE', lambda x : (x <= temperature + 0.5) and (x >= temperature - 0.5), None)
+        print('temperature is set')
 
 
     def take_image(self, exposure_time):
@@ -35,7 +38,6 @@ class SBIG_CCD(Windevice):
         print('Capturing image...')
         # Get image data
         try:
-            print(self._winclient.blob_queue['SBIG CCD'])
             img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
         except Exception as e:
             traceback.print_exc()

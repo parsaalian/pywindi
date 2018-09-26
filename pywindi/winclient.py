@@ -19,7 +19,7 @@ class Winclient(PyIndi.BaseClient):
     :param port: the port of the host to connect. The default value is 7624 which is
                  the default reserved port for indi.
     """
-    
+
     def __init__(self, host='localhost', port=7624):
         super(Winclient, self).__init__()
         #: a dictionary with devices. The keys are devices names and the valus are
@@ -33,8 +33,9 @@ class Winclient(PyIndi.BaseClient):
 
         #: event managers for devices and properties. If they are received from the
         #: system, the respected event of them will be set in the event manager.
-        self.device_wait = EventManager(10)
-        self.property_wait = EventManager(10)
+        self.device_wait = EventManager(600)
+        self.property_wait = EventManager(600)
+        self.conditional_wait = EventManager(600)
 
         self.host = host
         #: connects to the given server.
@@ -65,16 +66,15 @@ class Winclient(PyIndi.BaseClient):
 
     def newBLOB(self, bp):
         #: adds the new blob to its queue.
-        print('blobe sag')
         self.blob_queue[bp.bvp.device].push([time, bp])
 
     def newSwitch(self, svp):
         pass
 
     def newNumber(self, nvp):
-        pass
-        #if nvp.name == 'CCD_TEMPERATURE':
-        #    print('temperature: ', round(nvp[0].value, 3))
+        if nvp.name == 'CCD_TEMPERATURE':
+            print('temperature: ', round(nvp[0].value, 3))
+            self.conditional_wait.send('CCD_TEMPERATURE', nvp[0].value)
 
     def newText(self, tvp):
         pass

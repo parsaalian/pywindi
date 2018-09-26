@@ -15,10 +15,11 @@ class EventManager:
         self.timeout = timeout
         #: Dictionary of events waiting to execute (event wating list).
         self.event_dict = {}
+        self.condition_dict = {}
         self.lock = Lock()
 
 
-    def send(self, key):
+    def send(self, key, value=None):
         """This function should be called when an event has
         happened and we know that some other function may be
         or will be waiting for that event. So it fires the event
@@ -26,6 +27,7 @@ class EventManager:
 
         :param key: key of the event in event dictionary.
         """
+        already_exists = key in self.event_dict
 
         #: Locks the event dictionary so no other changes can happen
         #: to it, during this change.
@@ -34,7 +36,7 @@ class EventManager:
         #: Make an event in dictionary if it is not availabe.
         #: It happens when no one is waiting for the event right
         #: now, but may be waiting for that in the future.
-        if not key in self.event_dict:
+        if not already_exists:
             e = Event()
             self.event_dict[key] = e
         #: Runs if someone is already waiting for the event to happen.
@@ -43,10 +45,16 @@ class EventManager:
 
         #: Unlock dictionary.
         self.lock.release()
-        e.set()
+        if value is None:
+            e.set()
+        else:
+            if already_exists and self.condition_dict[key](value):
+                e.set()
+            else:
+                print('still waiting')
 
 
-    def wait(self, key, timeout=None):
+    def wait(self, key, condition=None, timeout=None):
         """When you want to wait for a value to be set, you
         can call this function and it waits the program until
         the send function for the same key is called.
@@ -62,6 +70,8 @@ class EventManager:
         if not key in self.event_dict:
             e = Event()
             self.event_dict[key] = e
+            if condition is not None:
+                self.condition_dict[key] = condition
         #: Runs if event is already available in dictionary. In case the
         #: event has been set before the wait or it has been called with
         #: wait function before this call.
@@ -111,7 +121,7 @@ class Queue:
         """
 
         #: Waiting for the element to be pushed.
-        self.event_manager.wait(self.pop_counter, timeout)
+        self.event_manager.wait(self.pop_counter, None, timeout)
         if len(self.queue) == 0:
             return None
         self.pop_counter += 1
