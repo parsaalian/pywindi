@@ -33,9 +33,9 @@ class Winclient(PyIndi.BaseClient):
 
         #: event managers for devices and properties. If they are received from the
         #: system, the respected event of them will be set in the event manager.
-        self.device_wait = EventManager(600)
-        self.property_wait = EventManager(600)
-        self.conditional_wait = EventManager(600)
+        self.device_wait = EventManager(None)
+        self.property_wait = EventManager(None)
+        self.conditional_wait = EventManager(None)
 
         self.host = host
         #: connects to the given server.

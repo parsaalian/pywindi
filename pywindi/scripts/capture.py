@@ -6,7 +6,7 @@ from datetime import datetime
 
 file = open('ccd_base_config.txt', 'r')
 
-ccd_num, ccd_time, ccd_temp, ccd_bin = 1, 0.0, 0.0, (1.0, 1.0)
+ccd_num, ccd_time, ccd_temp, ccd_bin, ccd_type = 1, 0.0, 0.0, (1.0, 1.0), 'light'
 #: path where image is saved.
 image_path = file.readline()[:-1]
 #: list of hosts.
@@ -30,7 +30,7 @@ def add_clients():
         clients.append(client)
 
 
-def take_image_with_one_client(client, time, temperature, binning, address):
+def take_image_with_one_client(client, time, temperature, binning, type, address):
     #: set the base properties.
     print('start capturing')
     try:
@@ -42,6 +42,7 @@ def take_image_with_one_client(client, time, temperature, binning, address):
     ccd.configure(image_directory=image_path + str(address) + '/')
     ccd.set_binning(binning[0], binning[1])
     ccd.set_temperature(temperature)
+    ccd.set_frame_type(type)
     image_info = (ccd.take_image(time), datetime.utcnow())
 
 @click.command()
@@ -50,15 +51,16 @@ def take_image_with_one_client(client, time, temperature, binning, address):
 @click.option('--binning', type=(float, float), help='binning of CCD for image')
 @click.option('--interval', type=float, help='interval between images')
 @click.option('--count', type=int, help='number of images to take')
-def capturer_cli(time, temperature, binning, interval, count):
+@click.option('--type', type=str, help='type of image to take')
+def capturer_cli(time, temperature, binning, interval, count, type):
     file.close()
-    ccd_time, ccd_temp, ccd_bin = time, temperature, binning
+    ccd_time, ccd_temp, ccd_bin, ccd_type = time, temperature, binning, type
     add_clients()
     for i in range(count):
         threads = []
         for enum, client in enumerate(clients):
             address = addresses[enum]
-            t = threading.Thread(target=take_image_with_one_client, args=(client, ccd_time, ccd_temp, ccd_bin, address))
+            t = threading.Thread(target=take_image_with_one_client, args=(client, ccd_time, ccd_temp, ccd_bin, ccd_type, address))
             threads.append(t)
         for thread in threads:
             thread.start()
@@ -70,15 +72,15 @@ def capturer_cli(time, temperature, binning, interval, count):
 
 
 
-def capturer(time, temperature, binning, interval, count):
+def capturer(time, temperature, binning, interval, count, type):
     file.close()
-    ccd_time, ccd_temp, ccd_bin = time, temperature, binning
+    ccd_time, ccd_temp, ccd_bin, ccd_type = time, temperature, binning, type
     add_clients()
     for i in range(count):
         threads = []
         for enum, client in enumerate(clients):
             address = addresses[enum]
-            t = threading.Thread(target=take_image_with_one_client, args=(client, ccd_time, ccd_temp, ccd_bin, address))
+            t = threading.Thread(target=take_image_with_one_client, args=(client, ccd_time, ccd_temp, ccd_bin, ccd_type, address))
             threads.append(t)
         for thread in threads:
             thread.start()

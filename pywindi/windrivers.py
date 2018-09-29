@@ -23,6 +23,13 @@ class SBIG_CCD(Windevice):
         self.set_property('CCD_BINNING', [bin_x, bin_y])
 
 
+    def set_frame_type(self, type):
+        types = {'light': 0, 'bias': 1, 'dark': 2, 'flat': 3}
+        enum_type = types[type]
+        set_value = [enum_type == 0, enum_type == 1, enum_type == 2, enum_type == 3]
+        self.set_property('CCD_FRAME_TYPE', set_value)
+
+
     def set_temperature(self, temperature):
         self.set_property('CCD_COOLER', [True, False])
         self.set_property('CCD_TEMPERATURE', [temperature])
