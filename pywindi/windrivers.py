@@ -6,7 +6,7 @@ import time
 import traceback
 
 class SBIG_CCD(Windevice):
-    def __init__(self, winclient, indi_device, **kwargs):
+    def __init__(self, winclient, indi_device):
         super().__init__(winclient, indi_device)
         self.config = {'image_directory': None}
 
@@ -30,8 +30,13 @@ class SBIG_CCD(Windevice):
         self.set_property('CCD_FRAME_TYPE', set_value)
 
 
+    def set_ccd_cooler(self, **kwargs):
+        properties_list = [cooler_on, cooler_off]
+        self.set_global_property(CCD_COOLER, properties_list, **kwargs)
+
+
     def set_temperature(self, temperature):
-        self.set_property('CCD_COOLER', [True, False])
+        self.set_ccd_cooler(cooler_on=True)
         self.set_property('CCD_TEMPERATURE', [temperature])
         self._winclient.conditional_wait.wait('CCD_TEMPERATURE', lambda x : (x <= temperature + 0.5) and (x >= temperature - 0.5), None)
         print('temperature is set')
