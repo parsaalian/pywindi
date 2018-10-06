@@ -41,6 +41,10 @@ class SBIG_CCD(Windevice):
         print('temperature is set')
 
 
+    def get_temperature(self):
+        return self.get_property('CCD_TEMPERATURE', True, 0)
+
+
     def take_image(self, exposure_time):
         tick = time.time()
         self._winclient.wait_for_property('SBIG CCD', 'CCD1')
