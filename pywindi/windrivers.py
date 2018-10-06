@@ -25,6 +25,8 @@ class SBIG_CCD(Windevice):
     def set_temperature(self, temperature):
         self.set_property('CCD_COOLER', [True, False])
         self.set_property('CCD_TEMPERATURE', [temperature])
+        self._winclient.conditional_wait.wait('CCD_TEMPERATURE', lambda x : x <= temperature, None)
+        console.log('done')
 
 
     def take_image(self, exposure_time):
