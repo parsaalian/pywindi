@@ -51,7 +51,7 @@ class EventManager:
             if already_exists and self.condition_dict[key](value):
                 e.set()
             else:
-                console.log('still waiting')
+                print('still waiting')
 
 
     def wait(self, key, condition=None, timeout=None):

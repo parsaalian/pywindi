@@ -33,9 +33,9 @@ class Winclient(PyIndi.BaseClient):
 
         #: event managers for devices and properties. If they are received from the
         #: system, the respected event of them will be set in the event manager.
-        self.device_wait = EventManager(60)
-        self.property_wait = EventManager(60)
-        self.conditional_wait = EventManager(60)
+        self.device_wait = EventManager(None)
+        self.property_wait = EventManager(None)
+        self.conditional_wait = EventManager(None)
 
         self.host = host
         #: connects to the given server.
@@ -66,7 +66,6 @@ class Winclient(PyIndi.BaseClient):
 
     def newBLOB(self, bp):
         #: adds the new blob to its queue.
-        print('blobe sag')
         self.blob_queue[bp.bvp.device].push([time, bp])
 
     def newSwitch(self, svp):

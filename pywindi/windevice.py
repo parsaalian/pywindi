@@ -1,4 +1,5 @@
 import PyIndi
+import time
 
 INDI_TYPES = ['number', 'switch', 'text', 'light', 'blob']
 
@@ -31,11 +32,31 @@ class Windevice:
 
 
     def get_properties(self):
-        return self._device.getProperties()
+        properties = self._device.getProperties()
+        time.sleep(1)
+        property_list = {}
+        for p in properties:
+            property_name = p.getName()
+            property_list[property_name] = []
+            if p.getType() == PyIndi.INDI_TEXT:
+                property_list[property_name] = [t.name for t in p.getText()]
+            elif p.getType() == PyIndi.INDI_NUMBER:
+                property_list[property_name] = [t.name for t in p.getNumber()]
+            elif p.getType() == PyIndi.INDI_SWITCH:
+                property_list[property_name] = [t.name for t in p.getSwitch()]
+            elif p.getType() == PyIndi.INDI_LIGHT:
+                property_list[property_name] = [t.name for t in p.getLight()]
+            elif p.getType() == PyIndi.INDI_BLOB:
+                property_list[property_name] = [t.name for t in p.getBLOB()]
+        return property_list
 
 
-    # TODO: make the generator in a way that a map of property name and its normalize
-    #       name is available.
+    def set_global_property(self, property_name, properties_list, **kwargs):
+        sets = [None for i in range(len(properties_list))]
+        for name, value in kwargs.items():
+            sets[self.property_list[name]] = value
+        self.set_property(property_name, set)
+
 
     def set_property(self, property_name, new_sub_properties):
         '''Change the given property of device.

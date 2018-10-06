@@ -6,7 +6,7 @@ import time
 import traceback
 
 class SBIG_CCD(Windevice):
-    def __init__(self, winclient, indi_device, **kwargs):
+    def __init__(self, winclient, indi_device):
         super().__init__(winclient, indi_device)
         self.config = {'image_directory': None}
 
@@ -22,11 +22,23 @@ class SBIG_CCD(Windevice):
         self.set_property('CCD_BINNING', [bin_x, bin_y])
 
 
+    def set_frame_type(self, type):
+        types = {'light': 0, 'bias': 1, 'dark': 2, 'flat': 3}
+        enum_type = types[type]
+        set_value = [enum_type == 0, enum_type == 1, enum_type == 2, enum_type == 3]
+        self.set_property('CCD_FRAME_TYPE', set_value)
+
+
+    def set_ccd_cooler(self, **kwargs):
+        properties_list = [cooler_on, cooler_off]
+        self.set_global_property(CCD_COOLER, properties_list, **kwargs)
+
+
     def set_temperature(self, temperature):
         self.set_property('CCD_COOLER', [True, False])
         self.set_property('CCD_TEMPERATURE', [temperature])
-        self._winclient.conditional_wait.wait('CCD_TEMPERATURE', lambda x : x <= temperature, None)
-        console.log('done')
+        self._winclient.conditional_wait.wait('CCD_TEMPERATURE', lambda x : (x <= temperature + 0.5) and (x >= temperature - 0.5), None)
+        print('temperature is set')
 
 
     def take_image(self, exposure_time):
@@ -37,7 +49,6 @@ class SBIG_CCD(Windevice):
         print('Capturing image...')
         # Get image data
         try:
-            print(self._winclient.blob_queue['SBIG CCD'])
             img = self._winclient.blob_queue['SBIG CCD'].pop()[1]
         except Exception as e:
             traceback.print_exc()
