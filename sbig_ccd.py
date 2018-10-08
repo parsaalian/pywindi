@@ -221,5 +221,3 @@ class SBIG_CCD(Windevice):
 	def set_cfw_type(self, **kwargs):
 		properties_list = [cfw1, cfw2, cfw3, cfw4, cfw5, cfw6, cfw7, cfw8, cfw9, cfw10, cfw11, cfw12, cfw13, cfw14, cfw15, cfw16]
 		self.set_global_property(CFW_TYPE, properties_list, **kwargs)
-
-

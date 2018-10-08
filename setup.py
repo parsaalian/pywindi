@@ -22,5 +22,6 @@ setup(name='pywindi',
         [console_scripts]
         capture=pywindi.scripts.capture:capturer_cli
         ccdconfig=pywindi.scripts.config:config_cli
+        ccdtemp=pywindi.scripts.temperature:temp_cli
     ''',
     zip_safe=False)

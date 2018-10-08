@@ -1,10 +1,16 @@
 from pywindi.winclient import Winclient
+from pywindi.scripts.config import config
 import threading
 import click
 from time import sleep
 from datetime import datetime
+import os
 
-file = open('ccd_base_config.txt', 'r')
+if os.path.exists('ccd_base_config.txt'):
+    file = open('ccd_base_config.txt', 'r')
+else:
+    config('~/Desktop/images/', '(localhost:7624)')
+    file = open('ccd_base_config.txt', 'r')
 
 ccd_num, ccd_time, ccd_temp, ccd_bin, ccd_type = 1, 0.0, 0.0, (1.0, 1.0), 'light'
 #: path where image is saved.

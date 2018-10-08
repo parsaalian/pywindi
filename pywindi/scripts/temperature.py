@@ -3,9 +3,9 @@ import click
 
 address = ''
 
-def get_temperature(address):
+def get_temp(address):
     host, port = address.split(':')
-    client = Winclient(host, port)
+    client = Winclient(host, int(port))
     ccd = client.get_device('SBIG CCD')
     try:
         ccd = client.get_device('SBIG CCD')
@@ -13,11 +13,13 @@ def get_temperature(address):
         print(e)
         print('Couldn\'t connect to', address, 'server.')
         return
-    return ccd.get_temperature()
+    temp = ccd.get_temperature()
+    client.disconnectServer()
+    return temp
 
 @click.command()
 @click.option('--addr', type=str, help='address of ccd to get temperature from')
-def get_temperature_cli(addr):
+def temp_cli(addr):
     global address
     address = addr
-    return get_temperature(address)
+    return get_temp(address)
