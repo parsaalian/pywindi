@@ -1,4 +1,4 @@
-#PyWindi
+# PyWindi
 
 PyWindi Project is a wrapper for PyIndi library that automates many functionalities with a simple interface.
 It is a package for python and the commands for terminal will be available in future versions.
@@ -60,8 +60,10 @@ python3 setup.py install
 
 This project is free under the GPL License.
 
-##Programing with PyWindi
-####1. Connect to indiserver
+## Programing with PyWindi
+
+#### 1. Connect to indiserver
+
 To use pywindi and connect indi devices you should launch an *indiserver* on your localhost or on another device in your
  network. To do this, you must have the indi device name you intend to connect to. For example if you want connect a SBIG
   CCD you should run this command in terminal.
@@ -70,7 +72,9 @@ To use pywindi and connect indi devices you should launch an *indiserver* on you
 If you want connect multiple device you can try this for SBIG CCD and V4L2 CCD.
     
     indiserver indi_sbig_ccd indi_v4l2_ccd
-####2. Connect to a Winclient
+    
+#### 2. Connect to a Winclient
+
 To connect to a indi client you should first import *Winclient* from *pywindi.winclient* and next define a client to
  connect to device.
 
@@ -82,7 +86,7 @@ You can connect to a client in your network with Winclient and you must have the
     network_client = Winclient('192.168.150.72')
     local_client = Winclient()
     
-####3. Connect to device
+#### 3. Connect to device
 to connect *local_client* in section2 to a V4L2 CCD or SBIG CCD device you must add the code bellow.
 
     v4l2_device0 = local_client.get_device("V4L2 CCD")
@@ -91,7 +95,7 @@ to connect *local_client* in section2 to a V4L2 CCD or SBIG CCD device you must 
     
 And next you can do what you want with these defined devices.
 
-####4. Properties
+#### 4. Properties
 To see properties of devices you can run **test_indiclient.py** code in *sample* directory after doing section1 (connect to indiserver).
 
 test_indiclient.py:
@@ -196,7 +200,8 @@ test_indiclient.py:
     print("Disconnecting")
     indiclient.disconnectServer()
 
-####5. Set property
+#### 5. Set property
+
 As you saw in the previous section, you have a lot of properties that you can change them. With following code you can
  change what you want. For example, to change *Image Adjustments* of a camera we can do the following after section 3.
         
@@ -204,24 +209,33 @@ As you saw in the previous section, you have a lot of properties that you can ch
         
  As you saw *set_property* method takes name of property (As you saw in section 4) and also takes a list to set them. 
  You can test it yourself to set your properties.
-####6. Configuration to take image with SBIG CCD
+ 
+#### 6. Configuration to take image with SBIG CCD
+
 To taking image from a SBIG CCD you must first configure device. For this you have 2 option.
-#####6.1. Command line configuration
+
+##### 6.1. Command line configuration
+
 You can run following command in terminal and configure *directory* and *hosts*.
 
     ccd_config --directory  "YOUR_DIRECTORY" --hosts ("localhost", 7624)
     
 This command make **ccd_base_config.txt** in pywindi directory and we use that to configure our capturing.
-#####6.2. Python code configuration
+
+##### 6.2. Python code configuration
+
 You can import *config* function in you code and use that like following:
 
     from pywindi.scripts.config import config
     
     config("YOUR_DIRECTORY", ("localhost", 7624))
     
-####7. Take image with SBIG CCD
+#### 7. Take image with SBIG CCD
+
 For taking image with SBIG CCD you have 2 option.
-#####7.1. Command line capturing
+
+##### 7.1. Command line capturing
+
 Run following command in your terminal. You must set all of parameters.
 
     capture --time #EXPOSURE_TIME --temperature #CCD_TEMPERATURE --binning (#BINNING_X, #BINNING_Y) --interval #IMAGES_INTERVAL_TIME --count #NUMBER_OF_IMAGES_TO_TAKE --type #IMAGE_TYPE
@@ -230,7 +244,8 @@ for example:
     capture --time 10 --temprature -10 --binning (1.0, 1.0) --interval 5 --count 30 --type light
 Captured images will save in directory you cofigured in section 6.
 
-#####7.2. Python code capturing
+##### 7.2. Python code capturing
+
 First you must add the code bellow.
 
     file = open('ccd_base_config.txt', 'r')
